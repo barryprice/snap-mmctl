@@ -29,14 +29,18 @@ parts:
     plugin: make
     source-type: git
     source: https://github.com/mattermost/mattermost.git
+    source-depth: 1
     build-snaps:
       - go/latest/stable
     override-pull: |
       craftctl default
-      # build the latest tagged release
-      latest_tag=$(git tag --list | grep '^v' | grep -v '\-rc' | sort -V | tail -1)
-      git checkout ${latest_tag?}
-      craftctl set version=$(git describe --tags)
+      # list tags remotely (no commit download), then fetch only the one we need
+      latest_tag=$(git ls-remote --tags --sort=version:refname origin \
+        | grep 'refs/tags/v' | grep -v '\^{}' | grep -v '\-rc' \
+        | sed 's|.*refs/tags/||' | tail -1)
+      git fetch --depth=1 origin "refs/tags/${latest_tag?}:refs/tags/${latest_tag}"
+      git checkout ${latest_tag}
+      craftctl set version=${latest_tag}
     override-build: |
       make -C server mmctl-build
       mkdir ${SNAPCRAFT_PART_INSTALL?}/bin
