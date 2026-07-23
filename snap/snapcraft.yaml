@@ -1,0 +1,41 @@
+name: mmctl-bp
+title: mmctl
+contact:
+  - https://github.com/barryprice
+issues:
+  - https://github.com/barryprice/snap-mmctl/issues
+source-code:
+  - https://github.com/mattermost/mattermost/tree/master/server/cmd/mmctl
+website:
+  - https://github.com/mattermost/mattermost
+license: MIT
+base: core26
+adopt-info: mmctl
+summary: mmctl is a remote CLI tool for Mattermost
+description: |
+  mmctl is a remote CLI tool that lets you manage your Mattermost instance from the terminal.
+grade: stable
+confinement: strict
+
+apps:
+  mmctl:
+    command: bin/mmctl
+    plugs: [network]
+
+parts:
+  mmctl:
+    plugin: make
+    source-type: git
+    source: https://github.com/mattermost/mattermost.git
+    build-snaps:
+      - go/latest/stable
+    override-pull: |
+      craftctl default
+      # build the latest tagged release
+      latest_tag=$(git tag --list | grep '^v' | grep -v '\-rc' | sort -V | tail -1)
+      git checkout ${latest_tag?}
+      craftctl set version=$(git describe --tags)
+    override-build: |
+      make -C server mmctl-build
+      mkdir ${SNAPCRAFT_PART_INSTALL?}/bin
+      cp -v server/bin/mmctl ${SNAPCRAFT_PART_INSTALL?}/bin/
