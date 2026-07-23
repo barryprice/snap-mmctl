@@ -20,7 +20,7 @@ confinement: strict
 apps:
   mmctl:
     command: bin/mmctl
-    plugs: [network]
+    plugs: [home, network]
 
 parts:
   mmctl:
