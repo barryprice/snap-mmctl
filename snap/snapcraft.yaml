@@ -16,6 +16,20 @@ description: |
   mmctl is a remote CLI tool that lets you manage your Mattermost instance from the terminal.
 grade: stable
 confinement: strict
+platforms:
+  # at time of writing, mmctl fails to compile on both armhf and s390x due to type errors
+  amd64:
+    build-on:
+      - amd64
+  arm64:
+    build-on:
+      - arm64
+  ppc64el:
+    build-on:
+      - ppc64el
+  riscv64:
+    build-on:
+      - riscv64
 
 apps:
   mmctl:
@@ -40,7 +54,7 @@ parts:
         | sed 's|.*refs/tags/||' | tail -1)
       git fetch --depth=1 origin "refs/tags/${latest_tag?}:refs/tags/${latest_tag}"
       git checkout ${latest_tag}
-      craftctl set version=${latest_tag}
+      craftctl set version=${latest_tag#v}
     override-build: |
       make -C server mmctl-build
       mkdir ${SNAPCRAFT_PART_INSTALL?}/bin
