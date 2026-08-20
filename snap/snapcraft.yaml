@@ -44,14 +44,20 @@ parts:
     source-type: git
     source: https://github.com/mattermost/mattermost.git
     source-depth: 1
+    build-packages:
+      - curl
+      - jq
     build-snaps:
       - go/latest/stable
     override-pull: |
       craftctl default
-      # list tags remotely (no commit download), then fetch only the one we need
-      latest_tag=$(git ls-remote --tags --sort=version:refname origin \
-        | grep 'refs/tags/v' | grep -v '\^{}' | grep -v '\-rc' \
-        | sed 's|.*refs/tags/||' | tail -1)
+      # get latest ESR remotely
+      latest_tag=$(
+        curl -sSL \
+          https://api.github.com/repos/mattermost/mattermost/releases \
+          | jq -r \
+          '[.[]|select(.draft or .prerelease|not)|select(.body|test("Extended Support Release"))]|max_by(.published_at)|.tag_name'
+      )
       git fetch --depth=1 origin "refs/tags/${latest_tag?}:refs/tags/${latest_tag}"
       git checkout ${latest_tag}
       craftctl set version=${latest_tag#v}
