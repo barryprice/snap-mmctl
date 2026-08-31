@@ -1,5 +1,10 @@
 name: mmctl-bp
 title: mmctl
+summary: mmctl is a remote CLI tool for Mattermost
+description: |
+  mmctl is a remote CLI tool that lets you manage your Mattermost instance from the terminal.
+license: MIT
+
 contact:
   - https://github.com/barryprice
 issues:
@@ -8,14 +13,12 @@ source-code:
   - https://github.com/mattermost/mattermost/tree/master/server/cmd/mmctl
 website:
   - https://github.com/mattermost/mattermost
-license: MIT
-base: core26
+
 adopt-info: mmctl
-summary: mmctl is a remote CLI tool for Mattermost
-description: |
-  mmctl is a remote CLI tool that lets you manage your Mattermost instance from the terminal.
-grade: stable
 confinement: strict
+grade: stable
+base: core26
+
 platforms:
   # at time of writing, mmctl fails to compile on both armhf and s390x due to type errors
   amd64:

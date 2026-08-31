@@ -1,44 +1,62 @@
 # snap-mmctl
 
-Snap packaging for [mmctl](https://github.com/mattermost/mattermost/tree/master/server/cmd/mmctl), the remote CLI tool for [Mattermost](https://mattermost.com).
+**mmctl as a [Snap](https://snapcraft.io) package.**
 
-> **Community project.** This snap is maintained independently and is not
-> endorsed by or affiliated with Mattermost, Inc.
+[mmctl](https://github.com/mattermost/mattermost/tree/master/server/cmd/mmctl) is the remote CLI tool for [Mattermost](https://mattermost.com). This repo packages it as a strictly-confined Snap, making it a single-command install on any Linux distribution that supports snaps.
 
-## Installation
+## Install
 
-```
+[![Get it from the Snap Store](https://snapcraft.io/en/dark/install.svg)](https://snapcraft.io/mmctl-bp)
+
+```bash
 sudo snap install mmctl-bp
+```
+
+### Tracks
+
+The Snap is published on two tracks:
+
+| Track | Branch | Description |
+|-------|--------|-------------|
+| `stable/` | `main` | Latest upstream release |
+| `esr/` | `esr` | Latest Extended Support Release |
+
+Install the ESR track with:
+
+```bash
+sudo snap install mmctl-bp --channel=esr/stable
 ```
 
 ### Convenient alias
 
-The snap command is `mmctl-bp.mmctl`. To call it as plain `mmctl`, create an
-alias:
+The snap command is `mmctl-bp.mmctl`. To call it as plain `mmctl`, create an alias:
 
-```
+```bash
 sudo snap alias mmctl-bp.mmctl mmctl
 ```
 
-## Sandboxing
+## Usage
 
-The snap runs under strict confinement. It has access to the network (to reach
-your Mattermost server) and read/write access to files under your `$HOME`
-directory — necessary for authentication with token files.
+Authenticate and manage your Mattermost server:
 
-## Configuration
-
-mmctl configuration is stored under:
-
-```
-$HOME/snap/mmctl-bp/common/.config/
+```bash
+mmctl auth login https://mattermost.example.com
+mmctl user list
+mmctl team list
 ```
 
-This location is shared across all versions of the snap, so your credentials
-and settings survive upgrades and refreshes without any manual migration.
+See the [upstream docs](https://docs.mattermost.com/manage/mmctl-command-line-tool.html) for the full command reference.
 
-## Source
+## How it works
 
-- Snap recipe: <https://github.com/barryprice/snap-mmctl>
-- Upstream mmctl: <https://github.com/mattermost/mattermost/tree/master/server/cmd/mmctl>
-- Issues specific to this snap: <https://github.com/barryprice/snap-mmctl/issues>
+The Snap wraps the latest mmctl release (tracked by the `main` branch) or the latest ESR (tracked by the `esr` branch). Each branch discovers the appropriate upstream tag at build time. A CI workflow verifies every push and PR still builds and passes linting, while [snapcraft.io](https://snapcraft.io) handles publishing to the Snap Store on its own schedule.
+
+## Disclaimer
+
+> **Community project.** This snap is maintained independently and is not
+> endorsed by or affiliated with Mattermost, Inc.
+
+## Credits
+
+- **[mattermost/mattermost](https://github.com/mattermost/mattermost)** — the Mattermost platform this Snap packages mmctl from.
+- **[barryprice](https://github.com/barryprice)** — Snap packaging and maintenance.
