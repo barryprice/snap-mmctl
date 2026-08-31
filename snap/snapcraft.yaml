@@ -51,13 +51,15 @@ parts:
       - go/latest/stable
     override-pull: |
       craftctl default
-      # list tags remotely (no commit download), then fetch only the one we need
-      latest_tag=$(git ls-remote --tags --sort=version:refname origin \
-        | grep 'refs/tags/v' | grep -v '\^{}' | grep -v '\-rc' \
-        | sed 's|.*refs/tags/||' | tail -1)
-      git fetch --depth=1 origin "refs/tags/${latest_tag?}:refs/tags/${latest_tag}"
-      git checkout ${latest_tag}
-      craftctl set version=${latest_tag#v}
+      # Pinned upstream release tag. Renovate bumps this line automatically
+      # when mattermost/mattermost publishes a new release (see renovate.json).
+      # renovate: datasource=github-releases depName=mattermost/mattermost
+      mmctl_version="v11.10.1"
+      # Ensure the pinned tag exists locally (shallow clones may omit it),
+      # then build exactly that release.
+      git fetch --tags --force origin
+      git checkout --detach "${mmctl_version}"
+      craftctl set version="${mmctl_version#v}"
     override-build: |
       make -C server mmctl-build
       mkdir ${SNAPCRAFT_PART_INSTALL?}/bin
