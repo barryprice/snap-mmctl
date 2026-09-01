@@ -14,7 +14,10 @@
       "versioningTemplate": "semver"
     }
   ],
-  "baseBranches": ["esr", "main"],
+  "baseBranchPatterns": [
+    "esr",
+    "main"
+  ],
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
