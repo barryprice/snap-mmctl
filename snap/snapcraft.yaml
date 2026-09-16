@@ -54,7 +54,7 @@ parts:
       # Pinned upstream release tag. Renovate bumps this line automatically
       # when mattermost/mattermost publishes a new release (see renovate.json).
       # renovate: datasource=github-releases depName=mattermost/mattermost
-      mmctl_version="v11.10.2"
+      mmctl_version="v11.11.0"
       # Ensure the pinned tag exists locally (shallow clones may omit it),
       # then build exactly that release.
       git fetch --tags --force origin
