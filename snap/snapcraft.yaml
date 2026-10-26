@@ -54,12 +54,13 @@ parts:
       - go/latest/stable
     override-pull: |
       craftctl default
-      # get latest ESR remotely
+      # get latest ESR remotely; pick by version, not publish date, since both
+      # supported ESR tracks get patch releases on the same day
       latest_tag=$(
         curl -sSL \
           https://api.github.com/repos/mattermost/mattermost/releases \
           | jq -r \
-          '[.[]|select(.draft or .prerelease|not)|select(.body|test("Extended Support Release"))]|max_by(.published_at)|.tag_name'
+          '[.[]|select(.draft or .prerelease|not)|select(.body|test("Extended Support Release"))]|max_by(.tag_name|ltrimstr("v")|split(".")|map(tonumber))|.tag_name'
       )
       git fetch --depth=1 origin "refs/tags/${latest_tag?}:refs/tags/${latest_tag}"
       git checkout ${latest_tag}
