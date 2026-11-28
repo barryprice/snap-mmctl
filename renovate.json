@@ -1,24 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended",
-    "helpers:pinGitHubActionDigests"
+    "github>barryprice/renovate-config:snaps"
   ],
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["snap/snapcraft.yaml"],
-      "matchStrings": [
-        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)\\s+mmctl_version=\"(?<currentValue>[^\"]+)\""
-      ],
-      "versioningTemplate": "semver"
-    }
-  ],
-  "baseBranches": ["esr", "main"],
-  "packageRules": [
-    {
-      "matchManagers": ["github-actions"],
-      "pinDigests": true
-    }
+  "baseBranchPatterns": [
+    "esr",
+    "main"
   ]
 }
